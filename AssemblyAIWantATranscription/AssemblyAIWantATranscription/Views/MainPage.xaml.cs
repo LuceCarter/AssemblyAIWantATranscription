@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
-namespace AssemblyAIWantATranscription
+namespace AssemblyAIWantATranscription.Views
 {
     public partial class MainPage : ContentPage
     {
