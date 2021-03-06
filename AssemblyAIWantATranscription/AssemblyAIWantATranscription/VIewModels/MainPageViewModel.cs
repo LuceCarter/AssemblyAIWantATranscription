@@ -9,6 +9,7 @@ using AssemblyAIWantATranscription.Helpers;
 using Xamarin.Essentials;
 using MvvmHelpers.Commands;
 using System.Threading.Tasks;
+using AssemblyAIWantATranscription.Services;
 
 namespace AssemblyAIWantATranscription.ViewModels
 {
@@ -16,12 +17,13 @@ namespace AssemblyAIWantATranscription.ViewModels
     {
         private readonly AudioRecorderService audioRecorderService;
         private readonly AudioPlayer audioPlayer;
+        private readonly TranscribeService transcribeService;
         
         public MainPageViewModel()
         {
             audioRecorderService = new AudioRecorderService();
             // audioRecorderService.StopRecordingOnSilence = true;
-            audioPlayer = new AudioPlayer();
+            transcribeService = new TranscribeService();
         }   
 
         private string _transcribedTextLabel = "Press Record to begin...";
@@ -52,7 +54,7 @@ namespace AssemblyAIWantATranscription.ViewModels
             {
                 
                 audioRecorderService.StopRecording();
-                audioPlayer.Play(audioRecorderService.GetAudioFilePath());
+                transcribeService.TranscribeAudio(audioRecorderService.GetAudioFilePath());
             }
             else
             {
