@@ -23,7 +23,7 @@
                TextColor="#0F2745" />
         <ImageButton                
                 Command="{Binding RecordButtonCommand}"
-                BackgroundColor="#FFA03A"                
+                BackgroundColor="#FFA03A"
                 HorizontalOptions="Center"
                 VerticalOptions="EndAndExpand"
                 CornerRadius="60" 
@@ -32,7 +32,7 @@
                 Margin="0,0,0,10"
             Padding="10">
             <ImageButton.Source>
-                <FontImageSource FontFamily="FASolid"
+                <FontImageSource FontFamily="FASolid"                                 
                                  Glyph="{x:Static helpers:FAIcons.Microphone}"
                                  Color="#0F2745"/>
             </ImageButton.Source>

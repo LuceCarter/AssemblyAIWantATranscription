@@ -4,39 +4,60 @@ using System.Text;
 using System.Windows.Input;
 using MvvmHelpers;
 using Xamarin.Forms;
+using Plugin.AudioRecorder;
+using AssemblyAIWantATranscription.Helpers;
+using Xamarin.Essentials;
+using MvvmHelpers.Commands;
+using System.Threading.Tasks;
 
 namespace AssemblyAIWantATranscription.ViewModels
 {
     public class MainPageViewModel : BaseViewModel
     {
+        private readonly AudioRecorderService audioRecorderService;
+        private readonly AudioPlayer audioPlayer;
         
-
-
         public MainPageViewModel()
         {
-        }
+            audioRecorderService = new AudioRecorderService();
+            // audioRecorderService.StopRecordingOnSilence = true;
+            audioPlayer = new AudioPlayer();
+        }   
 
-        private string _transcribedTextLabel = "";
+        private string _transcribedTextLabel = "Press Record to begin...";
         public string TranscribedTextLabel
         {
             get => _transcribedTextLabel;
             set => SetProperty(ref _transcribedTextLabel, value);
         }
 
-        public ICommand RecordButtonCommand
+        public AsyncCommand RecordButtonCommand
         {
             get
             {
-                return new Command(() =>
-                {
-                    TranscribedTextLabel = "Button was pressed!";
-                });
+                return new AsyncCommand(RecordAudio);
             }
         }
 
-        private void RecordAudio()
+        private async Task RecordAudio()
         {
-            Console.WriteLine("I recorded Audio!");
+            // This was not in the video, we need to ask permission
+            // for the microphone to make it work for Android, see https://youtu.be/uBdX54sTCP0
+            var status = await Permissions.RequestAsync<Permissions.Microphone>();
+
+            if (status != PermissionStatus.Granted)
+                return;
+
+            if (audioRecorderService.IsRecording)
+            {
+                
+                audioRecorderService.StopRecording();
+                audioPlayer.Play(audioRecorderService.GetAudioFilePath());
+            }
+            else
+            {
+                 audioRecorderService.StartRecording();
+            }
         }
     }
 }
