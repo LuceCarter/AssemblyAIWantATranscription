@@ -22,7 +22,7 @@
                HorizontalOptions="CenterAndExpand"
                TextColor="#0F2745" />
         <ImageButton                
-                Command="{Binding RecordButton}"
+                Command="{Binding RecordButtonCommand}"
                 BackgroundColor="#FFA03A"                
                 HorizontalOptions="Center"
                 VerticalOptions="EndAndExpand"
