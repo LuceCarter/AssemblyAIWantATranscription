@@ -3,6 +3,7 @@ using System;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
+[assembly: ExportFont("WorkSans.ttf")]
 namespace AssemblyAIWantATranscription
 {
     public partial class App : Application

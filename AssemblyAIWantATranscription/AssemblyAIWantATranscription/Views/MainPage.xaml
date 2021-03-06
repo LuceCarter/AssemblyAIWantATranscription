@@ -1,24 +1,43 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="AssemblyAIWantATranscription.Views.MainPage">
-
+             xmlns:ios="clr-namespace:Xamarin.Forms.PlatformConfiguration.iOSSpecific;assembly=Xamarin.Forms.Core"
+             xmlns:helpers="clr-namespace:AssemblyAIWantATranscription.Helpers"
+             x:Class="AssemblyAIWantATranscription.Views.MainPage"
+             ios:Page.UseSafeArea="True">
+    
     <StackLayout>
-        <Frame BackgroundColor="#2196F3" Padding="24" CornerRadius="0">
-            <Label Text="Welcome to Xamarin.Forms!" HorizontalTextAlignment="Center" TextColor="White" FontSize="36"/>
+        <Frame BackgroundColor="#0F2745"
+               Padding="24" 
+               CornerRadius="0"
+               HasShadow="True"
+               BorderColor="Black">
+            <Label Text="AssemblyAIWantATranscription!" 
+                   HorizontalTextAlignment="Center" 
+                   TextColor="#FFA03A"
+                   FontAttributes="Bold"
+                   FontSize="23"/>
         </Frame>
-        <Label Text="Start developing now" FontSize="Title" Padding="30,10,30,10"/>
-        <Label Text="Make changes to your XAML file and save to see your UI update in the running app with XAML Hot Reload. Give it a try!" FontSize="16" Padding="30,0,30,0"/>
-        <Label FontSize="16" Padding="30,24,30,0">
-            <Label.FormattedText>
-                <FormattedString>
-                    <FormattedString.Spans>
-                        <Span Text="Learn more at "/>
-                        <Span Text="https://aka.ms/xamarin-quickstart" FontAttributes="Bold"/>
-                    </FormattedString.Spans>
-                </FormattedString>
-            </Label.FormattedText>
-        </Label>
+        <Label Text="{Binding TranscribedTextLabel}"
+               HorizontalOptions="CenterAndExpand"
+               TextColor="#0F2745" />
+        <ImageButton                
+                Command="{Binding RecordButton}"
+                BackgroundColor="#FFA03A"                
+                HorizontalOptions="Center"
+                VerticalOptions="EndAndExpand"
+                CornerRadius="60" 
+                HeightRequest="110" 
+                WidthRequest="110"
+                Margin="0,0,0,10"
+            Padding="10">
+            <ImageButton.Source>
+                <FontImageSource FontFamily="FASolid"
+                                 Glyph="{x:Static helpers:FAIcons.Microphone}"
+                                 Color="#0F2745"/>
+            </ImageButton.Source>
+        </ImageButton>
+
     </StackLayout>
 
 </ContentPage>
