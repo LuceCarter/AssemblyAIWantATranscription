@@ -52,7 +52,6 @@ namespace AssemblyAIWantATranscription.ViewModels
 
             if (audioRecorderService.IsRecording)
             {
-                
                 audioRecorderService.StopRecording();
                 transcribeService.TranscribeAudio(audioRecorderService.GetAudioFilePath());
             }

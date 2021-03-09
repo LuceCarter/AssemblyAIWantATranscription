@@ -1,45 +1,97 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net.Http;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
+using AssemblyAIWantATranscription.Helpers;
+using Newtonsoft.Json;
+using Xamarin.Essentials;
 
 namespace AssemblyAIWantATranscription.Services
 {
-    public class TranscribeService
+	public class TranscribeService
+	{
+		private readonly HttpClient _httpClient;
+		public TranscribeService()
+		{
+			_httpClient = new HttpClient();
+			_httpClient.BaseAddress = new Uri("https://api.assemblyai.com/v2/");
+			_httpClient.DefaultRequestHeaders.Add("authorization", Secrets.AssemblyAIApiToken);
+			
+		}
+
+		public async Task TranscribeAudio(string filePath)
+		{		
+			var url = await UploadFIle(filePath);
+			var id = await Transcribe(url);
+			Thread.Sleep(5000);
+
+			var text = await Download(id);
+		}
+
+        private async Task<string> UploadFIle(string filePath)
+        {
+			HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, "upload");
+			_httpClient.BaseAddress = new Uri("https://api.assemblyai.com/v2/");
+			_httpClient.DefaultRequestHeaders.Add("Transer-Encoding", "chunked");
+
+			var file = await FilePicker.PickAsync();
+			var file2 = await file.OpenReadAsync();
+
+			var streamContent = new StreamContent(file2);
+			request.Content = streamContent;
+
+			try
+            {
+				HttpResponseMessage response = await _httpClient.SendAsync(request);
+				var contentResponse = await response.Content.ReadAsStringAsync();
+				var jsonResult =  JsonConvert.DeserializeObject<UploadResponse>(contentResponse);
+				return jsonResult.upload_url;
+			} catch (Exception ex)
+            {
+				Console.WriteLine($"Error: {ex.Message}");
+				return "";
+            }	
+		}
+
+		private async Task<string> Transcribe(string url)
+		{
+			var json = new
+			{
+				audio_url = url
+			};
+
+			StringContent payload = new StringContent(JsonConvert.SerializeObject(json), Encoding.UTF8, "application/json");
+			HttpResponseMessage response = await _httpClient.PostAsync("https://api.assemblyai.com/v2/transcript", payload);
+			response.EnsureSuccessStatusCode();
+
+			var responseJson = await response.Content.ReadAsStringAsync();
+
+			var jsonResult = JsonConvert.DeserializeObject<UploadResponse>(responseJson);
+			return jsonResult.id;
+		}
+
+		private async Task<string> Download(string id)
+        {
+			HttpResponseMessage response = await _httpClient.GetAsync($"https://api.assemblyai.com/v2/transcript/{id}");
+			response.EnsureSuccessStatusCode();
+
+			var responseJson = await response.Content.ReadAsStringAsync();
+			var jsonResult = JsonConvert.DeserializeObject<UploadResponse>(responseJson);
+			return jsonResult.text;
+		}
+
+	}
+
+	public class UploadResponse
     {
-        private readonly HttpClient httpClient;
+		public string upload_url { get; set; }
+		public string id { get; set; }
 
-        public TranscribeService()
-        {
-            httpClient = new HttpClient();
-        }
-
-        public string TranscribeAudio(string filePath)
-        {
-            string jsonResult = SendFile(httpClient, filePath).Result;
-            return jsonResult;
-        }
-
-        private static async Task<string> SendFile(HttpClient client, string filePath)
-        {
-            try
-            {
-                HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, "upload");
-                request.Headers.Add("Transer-Encoding", "chunked");
-
-                var fileReader = System.IO.File.OpenRead(filePath);
-                var streamContent = new StreamContent(fileReader);
-                request.Content = streamContent;
-
-                HttpResponseMessage response = await client.SendAsync(request);
-                return await response.Content.ReadAsStringAsync();
-            }
-            catch (Exception ex)
-            {
-                System.Console.WriteLine($"Exception: {ex.Message}");
-                throw;
-            }
-        }
+		public string text { get; set; }
     }
+
+	
 }
