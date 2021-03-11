@@ -20,7 +20,8 @@
         </Frame>
         <Label Text="{Binding TranscribedTextLabel}"
                HorizontalOptions="CenterAndExpand"
-               TextColor="#0F2745" />
+               TextColor="#0F2745" 
+               FontSize="58"/>
         <ImageButton                
                 Command="{Binding RecordButtonCommand}"
                 BackgroundColor="#FFA03A"

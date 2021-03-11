@@ -21,7 +21,7 @@ namespace AssemblyAIWantATranscription.ViewModels
         
         public MainPageViewModel()
         {
-            audioRecorderService = new AudioRecorderService();
+            audioRecorderService = new AudioRecorderService();            
             // audioRecorderService.StopRecordingOnSilence = true;
             transcribeService = new TranscribeService();
         }   
@@ -53,11 +53,11 @@ namespace AssemblyAIWantATranscription.ViewModels
             if (audioRecorderService.IsRecording)
             {
                 audioRecorderService.StopRecording();
-                transcribeService.TranscribeAudio(audioRecorderService.GetAudioFilePath());
+                TranscribedTextLabel =  await transcribeService.TranscribeAudio(audioRecorderService.GetAudioFileStream());
             }
             else
             {
-                 audioRecorderService.StartRecording();
+                 audioRecorderService .StartRecording();
             }
         }
     }
