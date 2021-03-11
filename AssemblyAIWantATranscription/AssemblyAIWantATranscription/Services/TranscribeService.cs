@@ -12,27 +12,42 @@ namespace AssemblyAIWantATranscription.Services
     public class TranscribeService
 	{
 		private readonly HttpClient _httpClient;
+		private readonly string errorMessage = "Failed to fetch transcription. Please try again.";
 		public TranscribeService()
 		{
 			_httpClient = new HttpClient();
 			_httpClient.BaseAddress = new Uri("https://api.assemblyai.com/v2/");
 			_httpClient.DefaultRequestHeaders.Add("authorization", Secrets.AssemblyAIApiToken);
+			//_httpClient.DefaultRequestHeaders.Add("Transer-Encoding", "chunked");
 		}
 
 		public async Task<string> TranscribeAudio(Stream fileStream)
 		{		
 			var url = await UploadFIle(fileStream);
-			var id = await FetchId(url);
-			Thread.Sleep(5000);
 
-			return await FetchTranscription(id);
+			if (!String.IsNullOrEmpty(url))
+			{
+				var id = await FetchId(url);
+				if(id is not null)
+                {
+					Thread.Sleep(5000);
+					return await FetchTranscription(id);
+				}
+                else
+                {
+					return errorMessage;
+                }
+			}
+			else
+			{
+				return errorMessage;
+			}			
 		}
 
         private async Task<string> UploadFIle(Stream fileStream)
         {
 			HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, "upload");
-			_httpClient.BaseAddress = new Uri("https://api.assemblyai.com/v2/");
-			_httpClient.DefaultRequestHeaders.Add("Transer-Encoding", "chunked");
+			request.Headers.Add("Transfer-Encoding", "chunked");
 
 			var streamContent = new StreamContent(fileStream);
 			request.Content = streamContent;
@@ -46,7 +61,7 @@ namespace AssemblyAIWantATranscription.Services
 			} catch (Exception ex)
             {
 				Console.WriteLine($"Error: {ex.Message}");
-				return "";
+				return string.Empty;
             }	
 		}
 
@@ -57,21 +72,33 @@ namespace AssemblyAIWantATranscription.Services
 				audio_url = url
 			};
 
-			StringContent payload = new StringContent(JsonConvert.SerializeObject(json), Encoding.UTF8, "application/json");
-			HttpResponseMessage response = await _httpClient.PostAsync("https://api.assemblyai.com/v2/transcript", payload);
-			response.EnsureSuccessStatusCode();
+			try
+            {
+				StringContent payload = new StringContent(JsonConvert.SerializeObject(json), Encoding.UTF8, "application/json");
+				HttpResponseMessage response = await _httpClient.PostAsync("https://api.assemblyai.com/v2/transcript", payload);
+				response.EnsureSuccessStatusCode();
 
-			var responseJson = await response.Content.ReadAsStringAsync();
+				var responseJson = await response.Content.ReadAsStringAsync();
 
-			var jsonResult = JsonConvert.DeserializeObject<UploadResponse>(responseJson);
-			return jsonResult.id;
+				var jsonResult = JsonConvert.DeserializeObject<UploadResponse>(responseJson);
+				return jsonResult.id;
+			} catch (Exception ex)
+            {
+				Console.WriteLine($"Error: {ex.Message}");
+				return null;
+            }
+		
 		}
 
 		private async Task<string> FetchTranscription(string id)
         {
 			var uploadResponse = await WaitForSuccess($"https://api.assemblyai.com/v2/transcript/{id}", 30000);
 
-			return uploadResponse.text;
+			if(uploadResponse is not null)
+            {
+				return uploadResponse.text;
+			}
+			return errorMessage;
 		}
 
 		public async Task<UploadResponse> WaitForSuccess(string url, int timeout)
@@ -88,8 +115,15 @@ namespace AssemblyAIWantATranscription.Services
 					response = await _httpClient.GetAsync(url);
 					response.EnsureSuccessStatusCode();					
 
-					var responseJson = await response.Content.ReadAsStringAsync();
-					uploadResponse = JsonConvert.DeserializeObject<UploadResponse>(responseJson);
+					try
+                    {
+						var responseJson = await response.Content.ReadAsStringAsync();
+						uploadResponse = JsonConvert.DeserializeObject<UploadResponse>(responseJson);
+					}
+					catch (Exception ex)
+					{
+						Console.WriteLine($"Error: {ex.Message}");
+					}
 
 					if (!uploadResponse.status.Equals("completed")) { isSuccess = false; }
 					else
@@ -104,7 +138,7 @@ namespace AssemblyAIWantATranscription.Services
 				}
 				return isSuccess;
 			});
-			var result = await Task.WhenAny(Task.Delay(timeout));
+			var result = await Task.WhenAny(successTask, Task.Delay(timeout));
 			shouldContinue = false;
 			if (result == successTask)
 			{

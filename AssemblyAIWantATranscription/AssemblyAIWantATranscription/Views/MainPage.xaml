@@ -18,7 +18,9 @@
                    FontAttributes="Bold"
                    FontSize="23"/>
         </Frame>
-        <Label Text="{Binding TranscribedTextLabel}"
+        <Editor Text="{Binding TranscribedTextEditor}"
+               IsReadOnly="True"
+                AutoSize="TextChanges"
                HorizontalOptions="CenterAndExpand"
                TextColor="#0F2745" 
                FontSize="58"/>

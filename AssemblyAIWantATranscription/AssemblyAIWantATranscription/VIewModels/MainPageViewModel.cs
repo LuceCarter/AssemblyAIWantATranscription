@@ -26,11 +26,11 @@ namespace AssemblyAIWantATranscription.ViewModels
             transcribeService = new TranscribeService();
         }   
 
-        private string _transcribedTextLabel = "Press Record to begin...";
-        public string TranscribedTextLabel
+        private string _transcribedTextEditor = "Press Record to begin...";
+        public string TranscribedTextEditor
         {
-            get => _transcribedTextLabel;
-            set => SetProperty(ref _transcribedTextLabel, value);
+            get => _transcribedTextEditor;
+            set => SetProperty(ref _transcribedTextEditor, value);
         }
 
         public AsyncCommand RecordButtonCommand
@@ -52,12 +52,12 @@ namespace AssemblyAIWantATranscription.ViewModels
 
             if (audioRecorderService.IsRecording)
             {
-                audioRecorderService.StopRecording();
-                TranscribedTextLabel =  await transcribeService.TranscribeAudio(audioRecorderService.GetAudioFileStream());
+                await audioRecorderService.StopRecording();
+                TranscribedTextEditor =  await transcribeService.TranscribeAudio(audioRecorderService.GetAudioFileStream());
             }
             else
             {
-                 audioRecorderService .StartRecording();
+                 await audioRecorderService .StartRecording();
             }
         }
     }
