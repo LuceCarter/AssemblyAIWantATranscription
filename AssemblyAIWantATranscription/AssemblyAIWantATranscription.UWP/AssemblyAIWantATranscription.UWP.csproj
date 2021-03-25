@@ -143,6 +143,9 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Com.Airbnb.Xamarin.Forms.Lottie">
+      <Version>4.0.9</Version>
+    </PackageReference>
     <PackageReference Include="Plugin.AudioRecorder">
       <Version>1.1.0</Version>
     </PackageReference>
@@ -158,6 +161,9 @@
       <Project>{55B30AC9-FF2E-41E3-9C6E-FA602CE41771}</Project>
       <Name>AssemblyAIWantATranscription</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Assets\donkey.json" />
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
