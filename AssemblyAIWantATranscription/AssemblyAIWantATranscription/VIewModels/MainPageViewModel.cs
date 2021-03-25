@@ -24,7 +24,13 @@ namespace AssemblyAIWantATranscription.ViewModels
             audioRecorderService = new AudioRecorderService();            
             // audioRecorderService.StopRecordingOnSilence = true;
             transcribeService = new TranscribeService();
-        }   
+        }
+
+        private bool _isBusy = false;
+        public bool IsBusy {
+            get => _isBusy;
+            set => SetProperty(ref _isBusy, value);
+         }
 
         private string _transcribedTextEditor = "Press Record to begin...";
         public string TranscribedTextEditor
@@ -53,10 +59,25 @@ namespace AssemblyAIWantATranscription.ViewModels
             if (audioRecorderService.IsRecording)
             {
                 await audioRecorderService.StopRecording();
-                TranscribedTextEditor =  await transcribeService.TranscribeAudio(audioRecorderService.GetAudioFileStream());
+                IsBusy = true;
+                TranscribedTextEditor = "Transcription in progress...";
+
+                try
+                {
+                    var transcription = await transcribeService.TranscribeAudio(audioRecorderService.GetAudioFileStream());
+                    if(transcription.Length > 0)
+                    {
+                        TranscribedTextEditor = transcription;
+                        IsBusy = false;
+                    }
+                } catch (Exception ex)
+                {
+                    await Application.Current.MainPage.DisplayAlert("Error!", ex.Message, "OK");
+                }
             }
             else
             {
+                    
                  await audioRecorderService .StartRecording();
             }
         }

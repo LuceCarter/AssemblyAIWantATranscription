@@ -3,6 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="AssemblyAIWantATranscription.App">
     <Application.Resources>
+        <Color x:Key="primaryBlue">#FF0F2745</Color>
+        <Color x:Key="primaryOrange">#FFFFA03A</Color>
 
     </Application.Resources>
 </Application>
