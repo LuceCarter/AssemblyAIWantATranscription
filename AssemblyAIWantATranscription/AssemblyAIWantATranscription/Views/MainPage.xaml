@@ -27,47 +27,41 @@
                TextColor="{StaticResource primaryBlue}" 
                FontSize="58"/>
 
-            <lottie:AnimationView 
-                Animation="donkey.json"
+            <lottie:AnimationView
+                x:Name="RecordButton"
+                Clicked="RecordButton_Clicked"
+                Animation="mic.json"
                 AnimationSource="AssetOrBundle"
-                AutoPlay="True"
+                AutoPlay="False"
                 RepeatMode="Infinite"
-                HeightRequest="100"
-                WidthRequest="100"
-                VerticalOptions="FillAndExpand"
-                HorizontalOptions="FillAndExpand"/>
-
-            <ImageButton                
-                Command="{Binding RecordButtonCommand}"
-                BackgroundColor="{StaticResource primaryOrange}"
-                HorizontalOptions="Center"                
-                CornerRadius="60" 
-                HeightRequest="110" 
+                HeightRequest="110"
                 WidthRequest="110"
-                Margin="0,0,0,10"
-                Padding="10"
-                BorderColor="Black"
-                >
-                    <ImageButton.Source>
-                        <FontImageSource FontFamily="FASolid"                                 
-                                 Glyph="{x:Static helpers:FAIcons.Microphone}"
-                                 Color="{StaticResource primaryBlue}"/>
-                    </ImageButton.Source>
-                </ImageButton>
-      
+                HorizontalOptions="Center"
+                VerticalOptions="EndAndExpand"
+                Margin="0,0,0,10"   
+                />            
             
         </StackLayout>
-        <Grid BackgroundColor="#C0000000"
+        <Grid BackgroundColor="#ffa03a"
               Grid.RowSpan="1"
               IsVisible="{Binding IsBusy}">
             <StackLayout HorizontalOptions="Center"
                          Orientation="Vertical"
                          Spacing="40"
                          VerticalOptions="Center">
-                <ActivityIndicator Color="White"
-                                   IsRunning="true"
-                                   Scale="2"/>
+                <lottie:AnimationView
+                   Animation="busy.json"
+                   AnimationSource="AssetOrBundle"
+                   RepeatMode="Infinite"
+                   AutoPlay="True"
+                    HeightRequest="250"
+                    WidthRequest="250"
+                    HorizontalOptions="CenterAndExpand"
+                    VerticalOptions="CenterAndExpand"
+                    Opacity="1"/>
+
                 <Label Text="Waiting for transcription..."
+                       FontSize="Large"
                        TextColor="White"/>
             </StackLayout>
         </Grid>

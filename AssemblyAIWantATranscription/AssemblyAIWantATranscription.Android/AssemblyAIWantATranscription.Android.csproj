@@ -73,6 +73,9 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidAsset Include="Assets\donkey.json" />
+    <AndroidAsset Include="Assets\record.json" />
+    <AndroidAsset Include="Assets\mic.json" />
+    <AndroidAsset Include="Assets\busy.json" />
     <None Include="Resources\AboutResources.txt" />
     <None Include="Assets\AboutAssets.txt" />
     <None Include="Properties\AndroidManifest.xml" />

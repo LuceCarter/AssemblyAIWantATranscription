@@ -11,10 +11,18 @@ namespace AssemblyAIWantATranscription.Views
 {
     public partial class MainPage : ContentPage
     {
+        public MainPageViewModel viewModel;
         public MainPage()
         {
             InitializeComponent();
-            BindingContext = new MainPageViewModel();
+            BindingContext = viewModel = new MainPageViewModel();
+        }
+
+        private void RecordButton_Clicked(object sender, EventArgs e)
+        {
+            RecordButton.PlayAnimation();
+            RecordButton.RepeatCount = 5;
+            viewModel.RecordButtonCommand.ExecuteAsync();
         }
     }
 }
